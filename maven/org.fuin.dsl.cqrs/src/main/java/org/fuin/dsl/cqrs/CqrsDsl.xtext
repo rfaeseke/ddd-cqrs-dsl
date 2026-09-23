@@ -759,11 +759,20 @@ ProcessReaction:
 	doc=DOC?
 	'reacts-to' event=[Event|FQN] ('in-state' fromState=[ProcessState|FQN])? '{'
 		('correlate-by' correlationKey=ID)?
-		('issues-commands' commands+=[Command|FQN] (',' commands+=[Command|FQN])*)?
+		('issues-commands' commands+=IssuedCommand (',' commands+=IssuedCommand)*)?
 		('transition-to' toState=[ProcessState|FQN])?
 		('arm-timeout' armTimeout=Duration)?
 		(cancelTimeout?='cancel-timeout')?
 	'}';
+
+/**
+ * A command a reaction issues. The optional 'addressed-by' names the component of the triggering
+ * event that holds the id of the target instance - the ADDRESSEE, a different question from
+ * 'correlate-by', which names the running process the event belongs to. Without it the addressee
+ * follows from the model (the instance the 'instance-key' identifies, or a command handler).
+ */
+IssuedCommand:
+	command=[Command|FQN] ('addressed-by' addressee=ID)?;
 
 /** A notation for representing a fixed value in source code. */
 Literal:

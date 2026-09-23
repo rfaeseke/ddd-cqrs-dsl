@@ -64,7 +64,7 @@ public final class CqrsCompletionContributor extends CompletionContributor {
     private static final List<String> PM_BODY_KEYWORDS = List.of(
             "cron-schedule", "instance-key", "process-states", "reacts-to");
     private static final List<String> PM_REACTION_KEYWORDS = List.of(
-            "correlate-by", "issues-commands", "transition-to", "arm-timeout", "cancel-timeout");
+            "correlate-by", "issues-commands", "addressed-by", "transition-to", "arm-timeout", "cancel-timeout");
 
     private static final List<String> META_KEYWORDS = List.of(
             "slabel", "label", "tooltip", "prompt", "examples");

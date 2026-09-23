@@ -70,6 +70,7 @@ import org.fuin.dsl.cqrs.cqrsDsl.Hint;
 import org.fuin.dsl.cqrs.cqrsDsl.IdentityArgument;
 import org.fuin.dsl.cqrs.cqrsDsl.Import;
 import org.fuin.dsl.cqrs.cqrsDsl.InternalType;
+import org.fuin.dsl.cqrs.cqrsDsl.IssuedCommand;
 import org.fuin.dsl.cqrs.cqrsDsl.Key;
 import org.fuin.dsl.cqrs.cqrsDsl.Literal;
 import org.fuin.dsl.cqrs.cqrsDsl.Method;
@@ -128,6 +129,14 @@ public class CqrsDslValidator extends AbstractCqrsDslValidator {
   public static final String PROCESS_STATE_DUPLICATE = "processStateDuplicate";
 
   public static final String PROCESS_CORRELATION_KEY_UNKNOWN = "processCorrelationKeyUnknown";
+
+  public static final String PROCESS_ADDRESSEE_UNKNOWN = "processAddresseeUnknown";
+
+  public static final String PROCESS_ADDRESSEE_WITHOUT_TARGET = "processAddresseeWithoutTarget";
+
+  public static final String PROCESS_ADDRESSEE_REDUNDANT = "processAddresseeRedundant";
+
+  public static final String PROCESS_ADDRESSEE_WRONG_AGGREGATE = "processAddresseeWrongAggregate";
 
   public static final String REF_TO_AGGREGATE_NOT_ALLOWED = "refToAggregateNotAllowed";
 
@@ -1429,6 +1438,114 @@ public class CqrsDslValidator extends AbstractCqrsDslValidator {
         this.error(_plus_1, reaction, 
           CqrsDslPackage.Literals.PROCESS_REACTION__CORRELATION_KEY, 
           CqrsDslValidator.PROCESS_CORRELATION_KEY_UNKNOWN);
+      }
+    }
+  }
+
+  /**
+   * Checks the 'addressed-by' of an issued command - the component of the triggering event that names the
+   * instance the command goes to. Four refusals, each for a declaration that would otherwise
+   * address nothing, or address twice:
+   * <ul>
+   * <li>a command without 'target' has no instance to address (a command handler decides);</li>
+   * <li>a command aimed at the aggregate the 'instance-key' identifies is already addressed by it,
+   * and a second address could contradict the first;</li>
+   * <li>the component must exist on the event (attributes, and parameters of 'copies-attributes-of')
+   * - otherwise the reaction would resolve an id that is not there and silently issue nothing;</li>
+   * <li>a component whose type is an aggregate id identifying a DIFFERENT aggregate than the
+   * command's target names the wrong kind of instance.</li>
+   * </ul>
+   */
+  @Check
+  public void checkIssuedCommandAddressee(final IssuedCommand issued) {
+    final String addressee = issued.getAddressee();
+    final Command command = issued.getCommand();
+    if ((((addressee == null) || (command == null)) || command.eIsProxy())) {
+      return;
+    }
+    if (((command.getTarget() == null) || command.getTarget().eIsProxy())) {
+      String _name = command.getName();
+      String _plus = ("Command \'" + _name);
+      String _plus_1 = (_plus + "\' has no target, so there is no instance for \'addressed-by\' to address");
+      this.error(_plus_1, issued, 
+        CqrsDslPackage.Literals.ISSUED_COMMAND__ADDRESSEE, 
+        CqrsDslValidator.PROCESS_ADDRESSEE_WITHOUT_TARGET);
+      return;
+    }
+    final Aggregate targetAggregate = EcoreUtil2.<Aggregate>getContainerOfType(command.getTarget(), Aggregate.class);
+    final ProcessManager manager = EcoreUtil2.<ProcessManager>getContainerOfType(issued, ProcessManager.class);
+    Type _instanceKey = null;
+    if (manager!=null) {
+      _instanceKey=manager.getInstanceKey();
+    }
+    final Type instanceKey = _instanceKey;
+    if ((((targetAggregate != null) && (instanceKey instanceof AggregateId)) && Objects.equals(((AggregateId) instanceKey).getAggregate(), targetAggregate))) {
+      String _name_1 = command.getName();
+      String _plus_2 = ("Command \'" + _name_1);
+      String _plus_3 = (_plus_2 + "\' already goes to the \'");
+      String _name_2 = targetAggregate.getName();
+      String _plus_4 = (_plus_3 + _name_2);
+      String _plus_5 = (_plus_4 + "\' the instance-key identifies; \'addressed-by\' would name a second address");
+      this.error(_plus_5, issued, 
+        CqrsDslPackage.Literals.ISSUED_COMMAND__ADDRESSEE, 
+        CqrsDslValidator.PROCESS_ADDRESSEE_REDUNDANT);
+      return;
+    }
+    final ProcessReaction reaction = EcoreUtil2.<ProcessReaction>getContainerOfType(issued, ProcessReaction.class);
+    Event _event = null;
+    if (reaction!=null) {
+      _event=reaction.getEvent();
+    }
+    final Event event = _event;
+    if (((event == null) || event.eIsProxy())) {
+      return;
+    }
+    final Function1<Attribute, Boolean> _function = (Attribute it) -> {
+      String _name_3 = it.getName();
+      return Boolean.valueOf(Objects.equals(_name_3, addressee));
+    };
+    Attribute _findFirst = IterableExtensions.<Attribute>findFirst(event.getAttributes(), _function);
+    Type _type = null;
+    if (_findFirst!=null) {
+      _type=_findFirst.getType();
+    }
+    Type componentType = _type;
+    if (((componentType == null) && (event.getOrigin() != null))) {
+      final Function1<Parameter, Boolean> _function_1 = (Parameter it) -> {
+        String _name_3 = it.getName();
+        return Boolean.valueOf(Objects.equals(_name_3, addressee));
+      };
+      Parameter _findFirst_1 = IterableExtensions.<Parameter>findFirst(event.getOrigin().getParameters(), _function_1);
+      Type _type_1 = null;
+      if (_findFirst_1!=null) {
+        _type_1=_findFirst_1.getType();
+      }
+      componentType = _type_1;
+    }
+    if ((componentType == null)) {
+      String _name_3 = event.getName();
+      String _plus_6 = ((("The addressee \'" + addressee) + "\' is not an attribute of event \'") + _name_3);
+      String _plus_7 = (_plus_6 + "\'");
+      this.error(_plus_7, issued, 
+        CqrsDslPackage.Literals.ISSUED_COMMAND__ADDRESSEE, 
+        CqrsDslValidator.PROCESS_ADDRESSEE_UNKNOWN);
+      return;
+    }
+    if (((targetAggregate != null) && (componentType instanceof AggregateId))) {
+      final Aggregate identified = ((AggregateId) componentType).getAggregate();
+      if ((((identified != null) && (!identified.eIsProxy())) && (!Objects.equals(identified, targetAggregate)))) {
+        String _name_4 = identified.getName();
+        String _plus_8 = ((("The addressee \'" + addressee) + "\' identifies a \'") + _name_4);
+        String _plus_9 = (_plus_8 + "\', but command \'");
+        String _name_5 = command.getName();
+        String _plus_10 = (_plus_9 + _name_5);
+        String _plus_11 = (_plus_10 + "\' goes to a \'");
+        String _name_6 = targetAggregate.getName();
+        String _plus_12 = (_plus_11 + _name_6);
+        String _plus_13 = (_plus_12 + "\'");
+        this.error(_plus_13, issued, 
+          CqrsDslPackage.Literals.ISSUED_COMMAND__ADDRESSEE, 
+          CqrsDslValidator.PROCESS_ADDRESSEE_WRONG_AGGREGATE);
       }
     }
   }

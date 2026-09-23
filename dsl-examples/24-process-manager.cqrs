@@ -5,6 +5,19 @@ context p_24_process_manager {
 
         aggregate-id OrderId identifies Order {}
 
+        aggregate-id CustomerId identifies Customer {}
+
+        // The aggregate a command below is ADDRESSED to - a different one than the process
+        // is keyed by, so the reaction has to say which instance it means (see 'addressed-by').
+        aggregate Customer identifier CustomerId {
+
+            /** Notes that the customer placed an order. */
+            method recordOrder {
+                UUID orderId
+            }
+
+        }
+
         // An aggregate whose events drive the process manager below.
         aggregate Order identifier OrderId {
 
@@ -24,6 +37,8 @@ context p_24_process_manager {
         event OrderPlacedEvent {
             /** The order's id. */
             UUID id
+            /** The customer who placed it. */
+            CustomerId customer
             message "Order ${id} placed"
         }
 
@@ -39,6 +54,11 @@ context p_24_process_manager {
             /** The order to collect payment for. */
             UUID orderId
             message "Request payment for ${orderId}"
+        }
+
+        /** Record at the customer that an order was placed. */
+        command RecordCustomerOrder target Customer.recordOrder {
+            message "Record order ${orderId} at its customer"
         }
 
         /** Cancel an order that was never paid. */
@@ -79,11 +99,14 @@ context p_24_process_manager {
             }
 
             /**
-             * When an order is placed, request payment and start the payment window.
+             * When an order is placed, request payment, note the order at its customer and start
+             * the payment window. 'correlate-by' names the running process (one per order),
+             * 'addressed-by' names the instance a command goes to: RecordCustomerOrder goes to the Customer the
+             * event's 'customer' identifies, not to anything keyed by the order.
              */
             reacts-to OrderPlacedEvent {
                 correlate-by id
-                issues-commands RequestPayment
+                issues-commands RequestPayment, RecordCustomerOrder addressed-by customer
                 transition-to AWAITING_PAYMENT
                 arm-timeout 15 minutes
             }

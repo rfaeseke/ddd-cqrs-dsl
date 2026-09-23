@@ -35,7 +35,7 @@ public final class CqrsTokenSets {
             CqrsTypes.KW_PROJECTION, CqrsTypes.KW_VIEW, CqrsTypes.KW_REST_PATH,
             CqrsTypes.KW_PROCESS_MANAGER, CqrsTypes.KW_CRON_SCHEDULE, CqrsTypes.KW_INSTANCE_KEY,
             CqrsTypes.KW_PROCESS_STATES, CqrsTypes.KW_REACTS_TO, CqrsTypes.KW_IN_STATE,
-            CqrsTypes.KW_CORRELATE_BY, CqrsTypes.KW_ISSUES_COMMANDS, CqrsTypes.KW_TRANSITION_TO,
+            CqrsTypes.KW_CORRELATE_BY, CqrsTypes.KW_ISSUES_COMMANDS, CqrsTypes.KW_ADDRESSED_BY, CqrsTypes.KW_TRANSITION_TO,
             CqrsTypes.KW_ARM_TIMEOUT, CqrsTypes.KW_CANCEL_TIMEOUT,
             CqrsTypes.KW_CONSISTENCY, CqrsTypes.KW_ACCEPTABLE,
             CqrsTypes.KW_DETECTION, CqrsTypes.KW_RESOLUTION, CqrsTypes.KW_OPTIONAL,

@@ -377,10 +377,14 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CqrsDsl.ecore#//ProcessReaction/event"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CqrsDsl.ecore#//ProcessReaction/fromState"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CqrsDsl.ecore#//ProcessReaction/correlationKey"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CqrsDsl.ecore#//ProcessReaction/commands"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CqrsDsl.ecore#//ProcessReaction/commands"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CqrsDsl.ecore#//ProcessReaction/toState"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CqrsDsl.ecore#//ProcessReaction/armTimeout"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CqrsDsl.ecore#//ProcessReaction/cancelTimeout"/>
+    </genClasses>
+    <genClasses ecoreClass="CqrsDsl.ecore#//IssuedCommand">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CqrsDsl.ecore#//IssuedCommand/command"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CqrsDsl.ecore#//IssuedCommand/addressee"/>
     </genClasses>
     <genClasses ecoreClass="CqrsDsl.ecore#//JSON"/>
     <genClasses ecoreClass="CqrsDsl.ecore#//JsonObject">

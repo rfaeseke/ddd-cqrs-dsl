@@ -8308,15 +8308,18 @@ ruleProcessReaction returns [EObject current=null]
 			(
 				(
 					{
+						newCompositeNode(grammarAccess.getProcessReactionAccess().getCommandsIssuedCommandParserRuleCall_6_1_0());
+					}
+					lv_commands_9_0=ruleIssuedCommand
+					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getProcessReactionRule());
+							$current = createModelElementForParent(grammarAccess.getProcessReactionRule());
 						}
-					}
-					{
-						newCompositeNode(grammarAccess.getProcessReactionAccess().getCommandsCommandCrossReference_6_1_0());
-					}
-					ruleFQN
-					{
+						add(
+							$current,
+							"commands",
+							lv_commands_9_0,
+							"org.fuin.dsl.cqrs.CqrsDsl.IssuedCommand");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -8329,15 +8332,18 @@ ruleProcessReaction returns [EObject current=null]
 				(
 					(
 						{
+							newCompositeNode(grammarAccess.getProcessReactionAccess().getCommandsIssuedCommandParserRuleCall_6_2_1_0());
+						}
+						lv_commands_11_0=ruleIssuedCommand
+						{
 							if ($current==null) {
-								$current = createModelElement(grammarAccess.getProcessReactionRule());
+								$current = createModelElementForParent(grammarAccess.getProcessReactionRule());
 							}
-						}
-						{
-							newCompositeNode(grammarAccess.getProcessReactionAccess().getCommandsCommandCrossReference_6_2_1_0());
-						}
-						ruleFQN
-						{
+							add(
+								$current,
+								"commands",
+								lv_commands_11_0,
+								"org.fuin.dsl.cqrs.CqrsDsl.IssuedCommand");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -8409,6 +8415,65 @@ ruleProcessReaction returns [EObject current=null]
 		{
 			newLeafNode(otherlv_17, grammarAccess.getProcessReactionAccess().getRightCurlyBracketKeyword_10());
 		}
+	)
+;
+
+// Entry rule entryRuleIssuedCommand
+entryRuleIssuedCommand returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getIssuedCommandRule()); }
+	iv_ruleIssuedCommand=ruleIssuedCommand
+	{ $current=$iv_ruleIssuedCommand.current; }
+	EOF;
+
+// Rule IssuedCommand
+ruleIssuedCommand returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getIssuedCommandRule());
+					}
+				}
+				{
+					newCompositeNode(grammarAccess.getIssuedCommandAccess().getCommandCommandCrossReference_0_0());
+				}
+				ruleFQN
+				{
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			otherlv_1='addressed-by'
+			{
+				newLeafNode(otherlv_1, grammarAccess.getIssuedCommandAccess().getAddressedByKeyword_1_0());
+			}
+			(
+				(
+					lv_addressee_2_0=RULE_ID
+					{
+						newLeafNode(lv_addressee_2_0, grammarAccess.getIssuedCommandAccess().getAddresseeIDTerminalRuleCall_1_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getIssuedCommandRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"addressee",
+							lv_addressee_2_0,
+							"org.fuin.dsl.cqrs.CqrsDsl.ID");
+					}
+				)
+			)
+		)?
 	)
 ;
 

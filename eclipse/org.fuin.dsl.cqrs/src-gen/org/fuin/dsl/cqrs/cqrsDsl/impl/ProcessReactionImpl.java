@@ -16,12 +16,13 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
-import org.fuin.dsl.cqrs.cqrsDsl.Command;
 import org.fuin.dsl.cqrs.cqrsDsl.CqrsDslPackage;
 import org.fuin.dsl.cqrs.cqrsDsl.Duration;
 import org.fuin.dsl.cqrs.cqrsDsl.Event;
+import org.fuin.dsl.cqrs.cqrsDsl.IssuedCommand;
 import org.fuin.dsl.cqrs.cqrsDsl.ProcessReaction;
 import org.fuin.dsl.cqrs.cqrsDsl.ProcessState;
 
@@ -108,14 +109,14 @@ public class ProcessReactionImpl extends MinimalEObjectImpl.Container implements
   protected String correlationKey = CORRELATION_KEY_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getCommands() <em>Commands</em>}' reference list.
+   * The cached value of the '{@link #getCommands() <em>Commands</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getCommands()
    * @generated
    * @ordered
    */
-  protected EList<Command> commands;
+  protected EList<IssuedCommand> commands;
 
   /**
    * The cached value of the '{@link #getToState() <em>To State</em>}' reference.
@@ -324,11 +325,11 @@ public class ProcessReactionImpl extends MinimalEObjectImpl.Container implements
    * @generated
    */
   @Override
-  public EList<Command> getCommands()
+  public EList<IssuedCommand> getCommands()
   {
     if (commands == null)
     {
-      commands = new EObjectResolvingEList<Command>(Command.class, this, CqrsDslPackage.PROCESS_REACTION__COMMANDS);
+      commands = new EObjectContainmentEList<IssuedCommand>(IssuedCommand.class, this, CqrsDslPackage.PROCESS_REACTION__COMMANDS);
     }
     return commands;
   }
@@ -463,6 +464,8 @@ public class ProcessReactionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case CqrsDslPackage.PROCESS_REACTION__COMMANDS:
+        return ((InternalEList<?>)getCommands()).basicRemove(otherEnd, msgs);
       case CqrsDslPackage.PROCESS_REACTION__ARM_TIMEOUT:
         return basicSetArmTimeout(null, msgs);
     }
@@ -527,7 +530,7 @@ public class ProcessReactionImpl extends MinimalEObjectImpl.Container implements
         return;
       case CqrsDslPackage.PROCESS_REACTION__COMMANDS:
         getCommands().clear();
-        getCommands().addAll((Collection<? extends Command>)newValue);
+        getCommands().addAll((Collection<? extends IssuedCommand>)newValue);
         return;
       case CqrsDslPackage.PROCESS_REACTION__TO_STATE:
         setToState((ProcessState)newValue);

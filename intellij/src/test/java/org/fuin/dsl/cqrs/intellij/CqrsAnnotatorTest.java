@@ -349,4 +349,36 @@ public class CqrsAnnotatorTest extends BasePlatformTestCase {
                 }
                 """);
     }
+
+    /**
+     * 'issues-commands A addressed-by x, B': the addressee 'x' sits between the two references, and
+     * B must still resolve as a command - the reference kind is found by walking back to the
+     * introducing keyword, over the addressee and 'addressed-by' as well.
+     */
+    public void testCommandAfterAnAddressedCommandResolves() {
+        check("""
+                context p {
+                  module c.n {
+                    type UUID
+                    aggregate-id HouseholdId identifies Household base UUID { }
+                    aggregate Household identifier HouseholdId {
+                      method record { }
+                    }
+                    event Requested {
+                      UUID id
+                      HouseholdId household
+                    }
+                    command Record target Household.record { }
+                    command Notify { }
+                    process-manager PM {
+                      instance-key UUID
+                      reacts-to Requested {
+                        correlate-by id
+                        issues-commands Record addressed-by household, Notify
+                      }
+                    }
+                  }
+                }
+                """);
+    }
 }

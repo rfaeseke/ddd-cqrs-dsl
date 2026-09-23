@@ -51,6 +51,7 @@ import org.fuin.dsl.cqrs.intellij.psi.CqrsContextDef;
 import org.fuin.dsl.cqrs.intellij.psi.CqrsReferenceElement;
 import org.fuin.dsl.cqrs.intellij.psi.CqrsProcessManager;
 import org.fuin.dsl.cqrs.intellij.psi.CqrsPsiUtil;
+import org.fuin.dsl.cqrs.intellij.psi.CqrsIssuedCommand;
 import org.fuin.dsl.cqrs.intellij.psi.CqrsProcessReaction;
 import org.fuin.dsl.cqrs.intellij.psi.CqrsProcessState;
 import org.fuin.dsl.cqrs.intellij.psi.CqrsParameter;
@@ -563,10 +564,19 @@ public final class CqrsValidationAnnotator implements Annotator {
         }
     }
 
-    /** Reports a 'correlate-by' key that is not an attribute of the reacted event. */
+    /**
+     * Reports a 'correlate-by' key, and an 'addressed-by' addressee, that is not an attribute of the
+     * reacted event.
+     */
     private void checkProcessReaction(@NotNull CqrsProcessReaction reaction, @NotNull AnnotationHolder holder) {
         PsiElement key = reaction.getId(); // the 'correlate-by' identifier (optional)
-        if (key == null) {
+        List<PsiElement> addressees = new ArrayList<>();
+        for (CqrsIssuedCommand issued : reaction.getIssuedCommandList()) {
+            if (issued.getId() != null) {
+                addressees.add(issued.getId());
+            }
+        }
+        if (key == null && addressees.isEmpty()) {
             return;
         }
         List<CqrsTypeRef> refs = reaction.getTypeRefList();
@@ -587,10 +597,15 @@ public final class CqrsValidationAnnotator implements Annotator {
             }
             vars.addAll(parameterNames(originTarget));
         }
-        String keyText = key.getText();
-        if (!vars.contains(keyText)) {
+        if (key != null && !vars.contains(key.getText())) {
             error(holder, key,
-                    "The correlation key '" + keyText + "' is not an attribute of event '" + event.getId().getText() + "'");
+                    "The correlation key '" + key.getText() + "' is not an attribute of event '" + event.getId().getText() + "'");
+        }
+        for (PsiElement addressee : addressees) {
+            if (!vars.contains(addressee.getText())) {
+                error(holder, addressee,
+                        "The addressee '" + addressee.getText() + "' is not an attribute of event '" + event.getId().getText() + "'");
+            }
         }
     }
 

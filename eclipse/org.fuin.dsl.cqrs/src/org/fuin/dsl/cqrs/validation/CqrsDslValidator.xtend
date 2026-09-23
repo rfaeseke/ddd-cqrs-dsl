@@ -82,6 +82,7 @@ import org.fuin.dsl.cqrs.cqrsDsl.View
 import org.fuin.dsl.cqrs.cqrsDsl.ProcessManager
 import org.fuin.dsl.cqrs.cqrsDsl.ProcessState
 import org.fuin.dsl.cqrs.cqrsDsl.ProcessReaction
+import org.fuin.dsl.cqrs.cqrsDsl.IssuedCommand
 import org.fuin.dsl.cqrs.cqrsDsl.AnnotationInstance
 import java.util.Collections
 import java.util.ArrayList
@@ -108,6 +109,14 @@ class CqrsDslValidator extends AbstractCqrsDslValidator {
 	public static val PROCESS_STATE_DUPLICATE = 'processStateDuplicate'
 
 	public static val PROCESS_CORRELATION_KEY_UNKNOWN = 'processCorrelationKeyUnknown'
+
+	public static val PROCESS_ADDRESSEE_UNKNOWN = 'processAddresseeUnknown'
+
+	public static val PROCESS_ADDRESSEE_WITHOUT_TARGET = 'processAddresseeWithoutTarget'
+
+	public static val PROCESS_ADDRESSEE_REDUNDANT = 'processAddresseeRedundant'
+
+	public static val PROCESS_ADDRESSEE_WRONG_AGGREGATE = 'processAddresseeWrongAggregate'
 
 	public static val REF_TO_AGGREGATE_NOT_ALLOWED = 'refToAggregateNotAllowed'
 
@@ -1233,6 +1242,82 @@ class CqrsDslValidator extends AbstractCqrsDslValidator {
 					reaction,
 					CqrsDslPackage.Literals::PROCESS_REACTION__CORRELATION_KEY,
 					PROCESS_CORRELATION_KEY_UNKNOWN
+				)
+			}
+		}
+	}
+
+	/**
+	 * Checks the 'addressed-by' of an issued command - the component of the triggering event that names the
+	 * instance the command goes to. Four refusals, each for a declaration that would otherwise
+	 * address nothing, or address twice:
+	 * <ul>
+	 * <li>a command without 'target' has no instance to address (a command handler decides);</li>
+	 * <li>a command aimed at the aggregate the 'instance-key' identifies is already addressed by it,
+	 * and a second address could contradict the first;</li>
+	 * <li>the component must exist on the event (attributes, and parameters of 'copies-attributes-of')
+	 * - otherwise the reaction would resolve an id that is not there and silently issue nothing;</li>
+	 * <li>a component whose type is an aggregate id identifying a DIFFERENT aggregate than the
+	 * command's target names the wrong kind of instance.</li>
+	 * </ul>
+	 */
+	@Check
+	def checkIssuedCommandAddressee(IssuedCommand issued) {
+		val String addressee = issued.addressee
+		val Command command = issued.command
+		if (addressee === null || command === null || command.eIsProxy) {
+			return
+		}
+		if (command.target === null || command.target.eIsProxy) {
+			error(
+				"Command '" + command.name + "' has no target, so there is no instance for 'addressed-by' to address",
+				issued,
+				CqrsDslPackage.Literals::ISSUED_COMMAND__ADDRESSEE,
+				PROCESS_ADDRESSEE_WITHOUT_TARGET
+			)
+			return
+		}
+		val Aggregate targetAggregate = EcoreUtil2.getContainerOfType(command.target, Aggregate)
+		val ProcessManager manager = EcoreUtil2.getContainerOfType(issued, ProcessManager)
+		val Type instanceKey = manager?.instanceKey
+		if (targetAggregate !== null && instanceKey instanceof AggregateId
+				&& (instanceKey as AggregateId).aggregate == targetAggregate) {
+			error(
+				"Command '" + command.name + "' already goes to the '" + targetAggregate.name
+					+ "' the instance-key identifies; 'addressed-by' would name a second address",
+				issued,
+				CqrsDslPackage.Literals::ISSUED_COMMAND__ADDRESSEE,
+				PROCESS_ADDRESSEE_REDUNDANT
+			)
+			return
+		}
+		val ProcessReaction reaction = EcoreUtil2.getContainerOfType(issued, ProcessReaction)
+		val Event event = reaction?.event
+		if (event === null || event.eIsProxy) {
+			return
+		}
+		var Type componentType = event.attributes.findFirst[name == addressee]?.type
+		if (componentType === null && event.origin !== null) {
+			componentType = event.origin.parameters.findFirst[name == addressee]?.type
+		}
+		if (componentType === null) {
+			error(
+				"The addressee '" + addressee + "' is not an attribute of event '" + event.name + "'",
+				issued,
+				CqrsDslPackage.Literals::ISSUED_COMMAND__ADDRESSEE,
+				PROCESS_ADDRESSEE_UNKNOWN
+			)
+			return
+		}
+		if (targetAggregate !== null && componentType instanceof AggregateId) {
+			val Aggregate identified = (componentType as AggregateId).aggregate
+			if (identified !== null && !identified.eIsProxy && identified != targetAggregate) {
+				error(
+					"The addressee '" + addressee + "' identifies a '" + identified.name + "', but command '"
+						+ command.name + "' goes to a '" + targetAggregate.name + "'",
+					issued,
+					CqrsDslPackage.Literals::ISSUED_COMMAND__ADDRESSEE,
+					PROCESS_ADDRESSEE_WRONG_AGGREGATE
 				)
 			}
 		}

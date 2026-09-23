@@ -402,6 +402,15 @@ public final class CqrsResolveUtil {
                     || cur.getNode().getElementType() == CqrsTypes.DOT)) {
                 cur = PsiTreeUtil.prevVisibleLeaf(cur);
             }
+            // 'issues-commands A addressed-by x, B': what was walked over was the addressee, not a
+            // reference - step over 'addressed-by' and the command it addresses as well.
+            if (cur != null && cur.getNode().getElementType() == CqrsTypes.KW_ADDRESSED_BY) {
+                cur = PsiTreeUtil.prevVisibleLeaf(cur);
+                while (cur != null && (cur.getNode().getElementType() == CqrsTypes.ID
+                        || cur.getNode().getElementType() == CqrsTypes.DOT)) {
+                    cur = PsiTreeUtil.prevVisibleLeaf(cur);
+                }
+            }
         }
         return cur;
     }

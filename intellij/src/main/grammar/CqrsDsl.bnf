@@ -77,6 +77,7 @@
     KW_IN_STATE='in-state'
     KW_CORRELATE_BY='correlate-by'
     KW_ISSUES_COMMANDS='issues-commands'
+    KW_ADDRESSED_BY='addressed-by'
     KW_TRANSITION_TO='transition-to'
     KW_ARM_TIMEOUT='arm-timeout'
     KW_CANCEL_TIMEOUT='cancel-timeout'
@@ -441,13 +442,17 @@ process_state ::= ID {
 
 process_reaction ::= KW_REACTS_TO type_ref (KW_IN_STATE type_ref)? LBRACE
     (KW_CORRELATE_BY ID)?
-    (KW_ISSUES_COMMANDS type_ref (COMMA type_ref)*)?
+    (KW_ISSUES_COMMANDS issued_command (COMMA issued_command)*)?
     (KW_TRANSITION_TO type_ref)?
     (KW_ARM_TIMEOUT duration)?
     KW_CANCEL_TIMEOUT?
   RBRACE {
   pin=1
 }
+
+// A command a reaction issues; 'addressed-by' names the event component holding the id of the
+// target instance (the addressee), a different question from 'correlate-by'.
+issued_command ::= type_ref (KW_ADDRESSED_BY ID)?
 
 // =========================================================================
 // Members

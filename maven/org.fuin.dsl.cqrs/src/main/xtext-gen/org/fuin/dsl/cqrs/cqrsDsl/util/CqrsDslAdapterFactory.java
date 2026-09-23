@@ -53,6 +53,7 @@ import org.fuin.dsl.cqrs.cqrsDsl.IdentityArgument;
 import org.fuin.dsl.cqrs.cqrsDsl.Import;
 import org.fuin.dsl.cqrs.cqrsDsl.InternalType;
 import org.fuin.dsl.cqrs.cqrsDsl.Invariants;
+import org.fuin.dsl.cqrs.cqrsDsl.IssuedCommand;
 import org.fuin.dsl.cqrs.cqrsDsl.JSON;
 import org.fuin.dsl.cqrs.cqrsDsl.JsonArray;
 import org.fuin.dsl.cqrs.cqrsDsl.JsonBoolean;
@@ -488,6 +489,11 @@ public class CqrsDslAdapterFactory extends AdapterFactoryImpl
       public Adapter caseProcessReaction(ProcessReaction object)
       {
         return createProcessReactionAdapter();
+      }
+      @Override
+      public Adapter caseIssuedCommand(IssuedCommand object)
+      {
+        return createIssuedCommandAdapter();
       }
       @Override
       public Adapter caseJSON(JSON object)
@@ -1612,6 +1618,21 @@ public class CqrsDslAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createProcessReactionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.fuin.dsl.cqrs.cqrsDsl.IssuedCommand <em>Issued Command</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.fuin.dsl.cqrs.cqrsDsl.IssuedCommand
+   * @generated
+   */
+  public Adapter createIssuedCommandAdapter()
   {
     return null;
   }

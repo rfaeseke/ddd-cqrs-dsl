@@ -5386,13 +5386,11 @@ public class CqrsDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Group cGroup_6 = (Group)cGroup.eContents().get(6);
 		private final Keyword cIssuesCommandsKeyword_6_0 = (Keyword)cGroup_6.eContents().get(0);
 		private final Assignment cCommandsAssignment_6_1 = (Assignment)cGroup_6.eContents().get(1);
-		private final CrossReference cCommandsCommandCrossReference_6_1_0 = (CrossReference)cCommandsAssignment_6_1.eContents().get(0);
-		private final RuleCall cCommandsCommandFQNParserRuleCall_6_1_0_1 = (RuleCall)cCommandsCommandCrossReference_6_1_0.eContents().get(1);
+		private final RuleCall cCommandsIssuedCommandParserRuleCall_6_1_0 = (RuleCall)cCommandsAssignment_6_1.eContents().get(0);
 		private final Group cGroup_6_2 = (Group)cGroup_6.eContents().get(2);
 		private final Keyword cCommaKeyword_6_2_0 = (Keyword)cGroup_6_2.eContents().get(0);
 		private final Assignment cCommandsAssignment_6_2_1 = (Assignment)cGroup_6_2.eContents().get(1);
-		private final CrossReference cCommandsCommandCrossReference_6_2_1_0 = (CrossReference)cCommandsAssignment_6_2_1.eContents().get(0);
-		private final RuleCall cCommandsCommandFQNParserRuleCall_6_2_1_0_1 = (RuleCall)cCommandsCommandCrossReference_6_2_1_0.eContents().get(1);
+		private final RuleCall cCommandsIssuedCommandParserRuleCall_6_2_1_0 = (RuleCall)cCommandsAssignment_6_2_1.eContents().get(0);
 		private final Group cGroup_7 = (Group)cGroup.eContents().get(7);
 		private final Keyword cTransitionToKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
 		private final Assignment cToStateAssignment_7_1 = (Assignment)cGroup_7.eContents().get(1);
@@ -5415,7 +5413,7 @@ public class CqrsDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//    doc=DOC?
 		//    'reacts-to' event=[Event|FQN] ('in-state' fromState=[ProcessState|FQN])? '{'
 		//        ('correlate-by' correlationKey=ID)?
-		//        ('issues-commands' commands+=[Command|FQN] (',' commands+=[Command|FQN])*)?
+		//        ('issues-commands' commands+=IssuedCommand (',' commands+=IssuedCommand)*)?
 		//        ('transition-to' toState=[ProcessState|FQN])?
 		//        ('arm-timeout' armTimeout=Duration)?
 		//        (cancelTimeout?='cancel-timeout')?
@@ -5425,7 +5423,7 @@ public class CqrsDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//doc=DOC?
 		//'reacts-to' event=[Event|FQN] ('in-state' fromState=[ProcessState|FQN])? '{'
 		//    ('correlate-by' correlationKey=ID)?
-		//    ('issues-commands' commands+=[Command|FQN] (',' commands+=[Command|FQN])*)?
+		//    ('issues-commands' commands+=IssuedCommand (',' commands+=IssuedCommand)*)?
 		//    ('transition-to' toState=[ProcessState|FQN])?
 		//    ('arm-timeout' armTimeout=Duration)?
 		//    (cancelTimeout?='cancel-timeout')?
@@ -5480,35 +5478,29 @@ public class CqrsDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//ID
 		public RuleCall getCorrelationKeyIDTerminalRuleCall_5_1_0() { return cCorrelationKeyIDTerminalRuleCall_5_1_0; }
 		
-		//('issues-commands' commands+=[Command|FQN] (',' commands+=[Command|FQN])*)?
+		//('issues-commands' commands+=IssuedCommand (',' commands+=IssuedCommand)*)?
 		public Group getGroup_6() { return cGroup_6; }
 		
 		//'issues-commands'
 		public Keyword getIssuesCommandsKeyword_6_0() { return cIssuesCommandsKeyword_6_0; }
 		
-		//commands+=[Command|FQN]
+		//commands+=IssuedCommand
 		public Assignment getCommandsAssignment_6_1() { return cCommandsAssignment_6_1; }
 		
-		//[Command|FQN]
-		public CrossReference getCommandsCommandCrossReference_6_1_0() { return cCommandsCommandCrossReference_6_1_0; }
+		//IssuedCommand
+		public RuleCall getCommandsIssuedCommandParserRuleCall_6_1_0() { return cCommandsIssuedCommandParserRuleCall_6_1_0; }
 		
-		//FQN
-		public RuleCall getCommandsCommandFQNParserRuleCall_6_1_0_1() { return cCommandsCommandFQNParserRuleCall_6_1_0_1; }
-		
-		//(',' commands+=[Command|FQN])*
+		//(',' commands+=IssuedCommand)*
 		public Group getGroup_6_2() { return cGroup_6_2; }
 		
 		//','
 		public Keyword getCommaKeyword_6_2_0() { return cCommaKeyword_6_2_0; }
 		
-		//commands+=[Command|FQN]
+		//commands+=IssuedCommand
 		public Assignment getCommandsAssignment_6_2_1() { return cCommandsAssignment_6_2_1; }
 		
-		//[Command|FQN]
-		public CrossReference getCommandsCommandCrossReference_6_2_1_0() { return cCommandsCommandCrossReference_6_2_1_0; }
-		
-		//FQN
-		public RuleCall getCommandsCommandFQNParserRuleCall_6_2_1_0_1() { return cCommandsCommandFQNParserRuleCall_6_2_1_0_1; }
+		//IssuedCommand
+		public RuleCall getCommandsIssuedCommandParserRuleCall_6_2_1_0() { return cCommandsIssuedCommandParserRuleCall_6_2_1_0; }
 		
 		//('transition-to' toState=[ProcessState|FQN])?
 		public Group getGroup_7() { return cGroup_7; }
@@ -5545,6 +5537,51 @@ public class CqrsDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		
 		//'}'
 		public Keyword getRightCurlyBracketKeyword_10() { return cRightCurlyBracketKeyword_10; }
+	}
+	public class IssuedCommandElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.fuin.dsl.cqrs.CqrsDsl.IssuedCommand");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cCommandAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final CrossReference cCommandCommandCrossReference_0_0 = (CrossReference)cCommandAssignment_0.eContents().get(0);
+		private final RuleCall cCommandCommandFQNParserRuleCall_0_0_1 = (RuleCall)cCommandCommandCrossReference_0_0.eContents().get(1);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Keyword cAddressedByKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cAddresseeAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cAddresseeIDTerminalRuleCall_1_1_0 = (RuleCall)cAddresseeAssignment_1_1.eContents().get(0);
+		
+		///**
+		// * A command a reaction issues. The optional 'addressed-by' names the component of the triggering
+		// * event that holds the id of the target instance - the ADDRESSEE, a different question from
+		// * 'correlate-by', which names the running process the event belongs to. Without it the addressee
+		// * follows from the model (the instance the 'instance-key' identifies, or a command handler).
+		// */
+		//IssuedCommand:
+		//    command=[Command|FQN] ('addressed-by' addressee=ID)?;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//command=[Command|FQN] ('addressed-by' addressee=ID)?
+		public Group getGroup() { return cGroup; }
+		
+		//command=[Command|FQN]
+		public Assignment getCommandAssignment_0() { return cCommandAssignment_0; }
+		
+		//[Command|FQN]
+		public CrossReference getCommandCommandCrossReference_0_0() { return cCommandCommandCrossReference_0_0; }
+		
+		//FQN
+		public RuleCall getCommandCommandFQNParserRuleCall_0_0_1() { return cCommandCommandFQNParserRuleCall_0_0_1; }
+		
+		//('addressed-by' addressee=ID)?
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//'addressed-by'
+		public Keyword getAddressedByKeyword_1_0() { return cAddressedByKeyword_1_0; }
+		
+		//addressee=ID
+		public Assignment getAddresseeAssignment_1_1() { return cAddresseeAssignment_1_1; }
+		
+		//ID
+		public RuleCall getAddresseeIDTerminalRuleCall_1_1_0() { return cAddresseeIDTerminalRuleCall_1_1_0; }
 	}
 	public class LiteralElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.fuin.dsl.cqrs.CqrsDsl.Literal");
@@ -6721,6 +6758,7 @@ public class CqrsDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	private final ProcessManagerElements pProcessManager;
 	private final ProcessStateElements pProcessState;
 	private final ProcessReactionElements pProcessReaction;
+	private final IssuedCommandElements pIssuedCommand;
 	private final LiteralElements pLiteral;
 	private final JSONElements pJSON;
 	private final JsonObjectElements pJsonObject;
@@ -6833,6 +6871,7 @@ public class CqrsDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		this.pProcessManager = new ProcessManagerElements();
 		this.pProcessState = new ProcessStateElements();
 		this.pProcessReaction = new ProcessReactionElements();
+		this.pIssuedCommand = new IssuedCommandElements();
 		this.pLiteral = new LiteralElements();
 		this.pJSON = new JSONElements();
 		this.pJsonObject = new JsonObjectElements();
@@ -8190,7 +8229,7 @@ public class CqrsDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//    doc=DOC?
 	//    'reacts-to' event=[Event|FQN] ('in-state' fromState=[ProcessState|FQN])? '{'
 	//        ('correlate-by' correlationKey=ID)?
-	//        ('issues-commands' commands+=[Command|FQN] (',' commands+=[Command|FQN])*)?
+	//        ('issues-commands' commands+=IssuedCommand (',' commands+=IssuedCommand)*)?
 	//        ('transition-to' toState=[ProcessState|FQN])?
 	//        ('arm-timeout' armTimeout=Duration)?
 	//        (cancelTimeout?='cancel-timeout')?
@@ -8201,6 +8240,22 @@ public class CqrsDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	
 	public ParserRule getProcessReactionRule() {
 		return getProcessReactionAccess().getRule();
+	}
+	
+	///**
+	// * A command a reaction issues. The optional 'addressed-by' names the component of the triggering
+	// * event that holds the id of the target instance - the ADDRESSEE, a different question from
+	// * 'correlate-by', which names the running process the event belongs to. Without it the addressee
+	// * follows from the model (the instance the 'instance-key' identifies, or a command handler).
+	// */
+	//IssuedCommand:
+	//    command=[Command|FQN] ('addressed-by' addressee=ID)?;
+	public IssuedCommandElements getIssuedCommandAccess() {
+		return pIssuedCommand;
+	}
+	
+	public ParserRule getIssuedCommandRule() {
+		return getIssuedCommandAccess().getRule();
 	}
 	
 	///** A notation for representing a fixed value in source code. */

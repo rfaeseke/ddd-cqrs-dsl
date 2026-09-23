@@ -71,6 +71,7 @@ NUMBER={HEX}|({INT}|{DECIMAL})("."({INT}|{DECIMAL}))?
   "in-state"                { return KW_IN_STATE; }
   "correlate-by"            { return KW_CORRELATE_BY; }
   "issues-commands"         { return KW_ISSUES_COMMANDS; }
+  "addressed-by"            { return KW_ADDRESSED_BY; }
   "transition-to"           { return KW_TRANSITION_TO; }
   "arm-timeout"             { return KW_ARM_TIMEOUT; }
   "cancel-timeout"          { return KW_CANCEL_TIMEOUT; }

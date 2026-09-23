@@ -458,12 +458,16 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="event" eType="#//Event"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="fromState" eType="#//ProcessState"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="correlationKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="commands" unique="false"
-        upperBound="-1" eType="#//Command"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="commands" upperBound="-1"
+        eType="#//IssuedCommand" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="toState" eType="#//ProcessState"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="armTimeout" eType="#//Duration"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="cancelTimeout" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IssuedCommand">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="command" eType="#//Command"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="addressee" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="JSON"/>
   <eClassifiers xsi:type="ecore:EClass" name="JsonObject" eSuperTypes="#//JSON">

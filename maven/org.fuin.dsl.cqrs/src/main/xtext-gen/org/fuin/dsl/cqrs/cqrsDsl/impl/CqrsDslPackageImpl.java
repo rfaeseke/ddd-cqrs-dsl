@@ -61,6 +61,7 @@ import org.fuin.dsl.cqrs.cqrsDsl.InconsistencyDetection;
 import org.fuin.dsl.cqrs.cqrsDsl.InconsistencyResolution;
 import org.fuin.dsl.cqrs.cqrsDsl.InternalType;
 import org.fuin.dsl.cqrs.cqrsDsl.Invariants;
+import org.fuin.dsl.cqrs.cqrsDsl.IssuedCommand;
 import org.fuin.dsl.cqrs.cqrsDsl.JsonArray;
 import org.fuin.dsl.cqrs.cqrsDsl.JsonBoolean;
 import org.fuin.dsl.cqrs.cqrsDsl.JsonMember;
@@ -574,6 +575,13 @@ public class CqrsDslPackageImpl extends EPackageImpl implements CqrsDslPackage
    * @generated
    */
   private EClass processReactionEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass issuedCommandEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -3601,6 +3609,39 @@ public class CqrsDslPackageImpl extends EPackageImpl implements CqrsDslPackage
    * @generated
    */
   @Override
+  public EClass getIssuedCommand()
+  {
+    return issuedCommandEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getIssuedCommand_Command()
+  {
+    return (EReference)issuedCommandEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getIssuedCommand_Addressee()
+  {
+    return (EAttribute)issuedCommandEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getJSON()
   {
     return jsonEClass;
@@ -4586,6 +4627,10 @@ public class CqrsDslPackageImpl extends EPackageImpl implements CqrsDslPackage
     createEReference(processReactionEClass, PROCESS_REACTION__ARM_TIMEOUT);
     createEAttribute(processReactionEClass, PROCESS_REACTION__CANCEL_TIMEOUT);
 
+    issuedCommandEClass = createEClass(ISSUED_COMMAND);
+    createEReference(issuedCommandEClass, ISSUED_COMMAND__COMMAND);
+    createEAttribute(issuedCommandEClass, ISSUED_COMMAND__ADDRESSEE);
+
     jsonEClass = createEClass(JSON);
 
     jsonObjectEClass = createEClass(JSON_OBJECT);
@@ -5067,10 +5112,14 @@ public class CqrsDslPackageImpl extends EPackageImpl implements CqrsDslPackage
     initEReference(getProcessReaction_Event(), this.getEvent(), null, "event", null, 0, 1, ProcessReaction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getProcessReaction_FromState(), this.getProcessState(), null, "fromState", null, 0, 1, ProcessReaction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getProcessReaction_CorrelationKey(), ecorePackage.getEString(), "correlationKey", null, 0, 1, ProcessReaction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getProcessReaction_Commands(), this.getCommand(), null, "commands", null, 0, -1, ProcessReaction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getProcessReaction_Commands(), this.getIssuedCommand(), null, "commands", null, 0, -1, ProcessReaction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getProcessReaction_ToState(), this.getProcessState(), null, "toState", null, 0, 1, ProcessReaction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getProcessReaction_ArmTimeout(), this.getDuration(), null, "armTimeout", null, 0, 1, ProcessReaction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getProcessReaction_CancelTimeout(), ecorePackage.getEBoolean(), "cancelTimeout", null, 0, 1, ProcessReaction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(issuedCommandEClass, IssuedCommand.class, "IssuedCommand", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getIssuedCommand_Command(), this.getCommand(), null, "command", null, 0, 1, IssuedCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getIssuedCommand_Addressee(), ecorePackage.getEString(), "addressee", null, 0, 1, IssuedCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(jsonEClass, org.fuin.dsl.cqrs.cqrsDsl.JSON.class, "JSON", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

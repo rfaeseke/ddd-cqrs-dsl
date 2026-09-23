@@ -609,6 +609,15 @@ public interface CqrsDslFactory extends EFactory
   ProcessReaction createProcessReaction();
 
   /**
+   * Returns a new object of class '<em>Issued Command</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Issued Command</em>'.
+   * @generated
+   */
+  IssuedCommand createIssuedCommand();
+
+  /**
    * Returns a new object of class '<em>JSON</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

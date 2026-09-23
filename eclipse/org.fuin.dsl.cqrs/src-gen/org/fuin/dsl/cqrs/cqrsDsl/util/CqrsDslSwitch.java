@@ -51,6 +51,7 @@ import org.fuin.dsl.cqrs.cqrsDsl.IdentityArgument;
 import org.fuin.dsl.cqrs.cqrsDsl.Import;
 import org.fuin.dsl.cqrs.cqrsDsl.InternalType;
 import org.fuin.dsl.cqrs.cqrsDsl.Invariants;
+import org.fuin.dsl.cqrs.cqrsDsl.IssuedCommand;
 import org.fuin.dsl.cqrs.cqrsDsl.JSON;
 import org.fuin.dsl.cqrs.cqrsDsl.JsonArray;
 import org.fuin.dsl.cqrs.cqrsDsl.JsonBoolean;
@@ -678,6 +679,13 @@ public class CqrsDslSwitch<T> extends Switch<T>
       {
         ProcessReaction processReaction = (ProcessReaction)theEObject;
         T result = caseProcessReaction(processReaction);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CqrsDslPackage.ISSUED_COMMAND:
+      {
+        IssuedCommand issuedCommand = (IssuedCommand)theEObject;
+        T result = caseIssuedCommand(issuedCommand);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -1927,6 +1935,22 @@ public class CqrsDslSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseProcessReaction(ProcessReaction object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Issued Command</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Issued Command</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIssuedCommand(IssuedCommand object)
   {
     return null;
   }

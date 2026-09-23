@@ -121,16 +121,16 @@ public interface ProcessReaction extends EObject
   void setCorrelationKey(String value);
 
   /**
-   * Returns the value of the '<em><b>Commands</b></em>' reference list.
-   * The list contents are of type {@link org.fuin.dsl.cqrs.cqrsDsl.Command}.
+   * Returns the value of the '<em><b>Commands</b></em>' containment reference list.
+   * The list contents are of type {@link org.fuin.dsl.cqrs.cqrsDsl.IssuedCommand}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Commands</em>' reference list.
+   * @return the value of the '<em>Commands</em>' containment reference list.
    * @see org.fuin.dsl.cqrs.cqrsDsl.CqrsDslPackage#getProcessReaction_Commands()
-   * @model
+   * @model containment="true"
    * @generated
    */
-  EList<Command> getCommands();
+  EList<IssuedCommand> getCommands();
 
   /**
    * Returns the value of the '<em><b>To State</b></em>' reference.

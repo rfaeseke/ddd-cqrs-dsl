@@ -484,4 +484,42 @@ public class CqrsValidationAnnotatorTest extends BasePlatformTestCase {
                 }
                 """);
     }
+
+    // --- process manager 'addressed-by' ------------------------------------------------------------
+
+    private static String addressedModel(String issues) {
+        return """
+                context p {
+                  module c.n {
+                    type UUID
+                    aggregate-id HouseholdId identifies Household { }
+                    aggregate Household identifier HouseholdId {
+                      method record { }
+                    }
+                    event Requested {
+                      UUID id
+                      HouseholdId household
+                    }
+                    command Record target Household.record { }
+                    process-manager PM {
+                      instance-key UUID
+                      reacts-to Requested {
+                        correlate-by id
+                        %s
+                      }
+                    }
+                  }
+                }
+                """.formatted(issues);
+    }
+
+    /** The addressee is a component of the event. */
+    public void testAddressedByAnEventComponentIsValid() {
+        check(addressedModel("issues-commands Record addressed-by household"));
+    }
+
+    /** A component the event does not carry would address nothing - and issue nothing, silently. */
+    public void testAddressedByAnUnknownComponentIsAnError() {
+        check(addressedModel("issues-commands Record addressed-by <error descr=\"The addressee 'houshold' is not an attribute of event 'Requested'\">houshold</error>"));
+    }
 }

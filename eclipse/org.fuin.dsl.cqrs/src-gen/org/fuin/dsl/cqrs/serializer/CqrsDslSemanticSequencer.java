@@ -50,6 +50,7 @@ import org.fuin.dsl.cqrs.cqrsDsl.Hint;
 import org.fuin.dsl.cqrs.cqrsDsl.IdentityArgument;
 import org.fuin.dsl.cqrs.cqrsDsl.Import;
 import org.fuin.dsl.cqrs.cqrsDsl.Invariants;
+import org.fuin.dsl.cqrs.cqrsDsl.IssuedCommand;
 import org.fuin.dsl.cqrs.cqrsDsl.JsonArray;
 import org.fuin.dsl.cqrs.cqrsDsl.JsonBoolean;
 import org.fuin.dsl.cqrs.cqrsDsl.JsonMember;
@@ -212,6 +213,9 @@ public class CqrsDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case CqrsDslPackage.INVARIANTS:
 				sequence_Invariants(context, (Invariants) semanticObject); 
+				return; 
+			case CqrsDslPackage.ISSUED_COMMAND:
+				sequence_IssuedCommand(context, (IssuedCommand) semanticObject); 
 				return; 
 			case CqrsDslPackage.JSON_ARRAY:
 				sequence_JsonArray(context, (JsonArray) semanticObject); 
@@ -997,6 +1001,20 @@ public class CqrsDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	/**
 	 * <pre>
 	 * Contexts:
+	 *     IssuedCommand returns IssuedCommand
+	 *
+	 * Constraint:
+	 *     (command=[Command|FQN] addressee=ID?)
+	 * </pre>
+	 */
+	protected void sequence_IssuedCommand(ISerializationContext context, IssuedCommand semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
 	 *     JSON returns JsonArray
 	 *     JsonArray returns JsonArray
 	 *
@@ -1358,7 +1376,7 @@ public class CqrsDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         event=[Event|FQN] 
 	 *         fromState=[ProcessState|FQN]? 
 	 *         correlationKey=ID? 
-	 *         (commands+=[Command|FQN] commands+=[Command|FQN]*)? 
+	 *         (commands+=IssuedCommand commands+=IssuedCommand*)? 
 	 *         toState=[ProcessState|FQN]? 
 	 *         armTimeout=Duration? 
 	 *         cancelTimeout?='cancel-timeout'?

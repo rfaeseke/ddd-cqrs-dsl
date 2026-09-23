@@ -62,6 +62,7 @@ import org.fuin.dsl.cqrs.cqrsDsl.InconsistencyDetection;
 import org.fuin.dsl.cqrs.cqrsDsl.InconsistencyResolution;
 import org.fuin.dsl.cqrs.cqrsDsl.InternalType;
 import org.fuin.dsl.cqrs.cqrsDsl.Invariants;
+import org.fuin.dsl.cqrs.cqrsDsl.IssuedCommand;
 import org.fuin.dsl.cqrs.cqrsDsl.JSON;
 import org.fuin.dsl.cqrs.cqrsDsl.JsonArray;
 import org.fuin.dsl.cqrs.cqrsDsl.JsonBoolean;
@@ -231,6 +232,7 @@ public class CqrsDslFactoryImpl extends EFactoryImpl implements CqrsDslFactory
       case CqrsDslPackage.PROCESS_MANAGER: return createProcessManager();
       case CqrsDslPackage.PROCESS_STATE: return createProcessState();
       case CqrsDslPackage.PROCESS_REACTION: return createProcessReaction();
+      case CqrsDslPackage.ISSUED_COMMAND: return createIssuedCommand();
       case CqrsDslPackage.JSON: return createJSON();
       case CqrsDslPackage.JSON_OBJECT: return createJsonObject();
       case CqrsDslPackage.JSON_MEMBER: return createJsonMember();
@@ -1110,6 +1112,18 @@ public class CqrsDslFactoryImpl extends EFactoryImpl implements CqrsDslFactory
   {
     ProcessReactionImpl processReaction = new ProcessReactionImpl();
     return processReaction;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public IssuedCommand createIssuedCommand()
+  {
+    IssuedCommandImpl issuedCommand = new IssuedCommandImpl();
+    return issuedCommand;
   }
 
   /**
