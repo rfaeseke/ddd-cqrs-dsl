@@ -20,12 +20,18 @@ package p.shared.domain.x.aggregateid;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serial;
 import javax.annotation.concurrent.Immutable;
+import org.fuin.ddd4j.core.HasEntityTypeConstant;
+import org.fuin.objects4j.common.HasPublicStaticIsValidMethod;
+import org.fuin.objects4j.common.HasPublicStaticValueOfMethod;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Aggregate ID single attribute and base.
  */
 @Immutable
+@HasEntityTypeConstant
+@HasPublicStaticIsValidMethod
+@HasPublicStaticValueOfMethod
 @XmlJavaTypeAdapter(MyAggregateIdConverter.class)
 public final class MyAggregateId extends AbstractMyAggregateId {
 

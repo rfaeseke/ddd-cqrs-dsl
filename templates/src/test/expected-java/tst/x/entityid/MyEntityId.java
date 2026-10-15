@@ -19,12 +19,18 @@ package p.shared.domain.x.entityid;
 
 import java.io.Serial;
 import javax.annotation.concurrent.Immutable;
+import org.fuin.ddd4j.core.HasEntityTypeConstant;
+import org.fuin.objects4j.common.HasPublicStaticIsValidMethod;
+import org.fuin.objects4j.common.HasPublicStaticValueOfMethod;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Entity ID single attribute and base.
  */
 @Immutable
+@HasEntityTypeConstant
+@HasPublicStaticIsValidMethod
+@HasPublicStaticValueOfMethod
 public final class MyEntityId extends AbstractMyEntityId {
 
     @Serial

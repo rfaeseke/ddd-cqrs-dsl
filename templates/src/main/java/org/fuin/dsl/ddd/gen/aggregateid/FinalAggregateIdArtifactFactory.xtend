@@ -64,6 +64,24 @@ class FinalAggregateIdArtifactFactory extends AbstractSource<AggregateId> {
             ctx.requiresImport("jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter")
         }
         ctx.requiresImport("javax.annotation.concurrent.Immutable")
+        if (aggregateId.registeredByJandex) {
+            ctx.requiresImport("org.fuin.ddd4j.core.HasEntityTypeConstant")
+            ctx.requiresImport("org.fuin.objects4j.common.HasPublicStaticIsValidMethod")
+            ctx.requiresImport("org.fuin.objects4j.common.HasPublicStaticValueOfMethod")
+            ctx.requiresImport("org.jspecify.annotations.Nullable")
+        }
+    }
+
+    /**
+     * Whether the id is one {@code JandexEntityIdFactory} can find: it registers a class only if it carries
+     * {@code @HasEntityTypeConstant}, {@code @HasPublicStaticIsValidMethod} and {@code @HasPublicStaticValueOfMethod},
+     * whose defaults name {@code isValid(String)} and {@code valueOf(String)}. Without them a command's
+     * {@code entity-id-path} ("USER 4") is refused with "Unknown type: USER", and a reference typed with this id
+     * reads back as null. A {@code base UUID} id takes the simple factory, which always had them; this is the same
+     * for the bases whose {@code valueOf(String)} the generated class already has.
+     */
+    def boolean registeredByJandex(AggregateId id) {
+        id.base !== null && #["Long", "Integer", "String"].contains(id.base.name)
     }
 
     def addReferences(CodeSnippetContext ctx, AggregateId aggregateId) {
@@ -79,6 +97,11 @@ class FinalAggregateIdArtifactFactory extends AbstractSource<AggregateId> {
             «new SrcJavaDocType(id)»
             @Immutable«IF id.base === null && idStrings.supported»
             «idStrings.annotations»«ENDIF»
+            «IF id.registeredByJandex»
+                @HasEntityTypeConstant
+                @HasPublicStaticIsValidMethod
+                @HasPublicStaticValueOfMethod
+            «ENDIF»
             «IF id.base !== null && options.jaxb»
                 @XmlJavaTypeAdapter(«id.name»Converter.class)
             «ENDIF»
@@ -98,6 +121,30 @@ class FinalAggregateIdArtifactFactory extends AbstractSource<AggregateId> {
                 «new SrcVoBaseMethods(ctx, id)»
                 «IF id.base === null»
                     «idStrings»
+                «ENDIF»
+                «IF id.registeredByJandex && id.base.name != "String"»
+                /**
+                 * Returns the information if a given String can be converted into an instance of «className»: the
+                 * check {@code JandexEntityIdFactory} calls beside {@link #valueOf(String)}. A <code>null</code> value
+                 * returns <code>true</code>.
+                 * 
+                 * @param value
+                 *            Value to check.
+                 * 
+                 * @return TRUE if it's a valid «id.base.name», else FALSE.
+                 */
+                public static boolean isValid(@Nullable final String value) {
+                    if (value == null) {
+                        return true;
+                    }
+                    try {
+                        «id.base.name».valueOf(value);
+                    } catch (final NumberFormatException ex) {
+                        return false;
+                    }
+                    return true;
+                }
+
                 «ENDIF»
             }
         '''

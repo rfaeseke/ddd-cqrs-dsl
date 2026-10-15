@@ -62,6 +62,21 @@ class FinalEntityIdArtifactFactory extends AbstractSource<EntityId> {
             ctx.requiresImport("jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter")
         }
         ctx.requiresImport("javax.annotation.concurrent.Immutable")
+        if (entityId.registeredByJandex) {
+            ctx.requiresImport("org.fuin.ddd4j.core.HasEntityTypeConstant")
+            ctx.requiresImport("org.fuin.objects4j.common.HasPublicStaticIsValidMethod")
+            ctx.requiresImport("org.fuin.objects4j.common.HasPublicStaticValueOfMethod")
+            ctx.requiresImport("org.jspecify.annotations.Nullable")
+        }
+    }
+
+    /**
+     * Whether the id is one {@code JandexEntityIdFactory} can find - see {@code FinalAggregateIdArtifactFactory}.
+     * A {@code base Integer} or {@code base UUID} entity id takes the simple factory, which always had the three
+     * annotations; this is the same for the other bases whose {@code valueOf(String)} the generated class has.
+     */
+    def boolean registeredByJandex(EntityId id) {
+        id.base !== null && #["Long", "String"].contains(id.base.name)
     }
 
     def addReferences(CodeSnippetContext ctx, EntityId entityId) {
@@ -77,6 +92,11 @@ class FinalEntityIdArtifactFactory extends AbstractSource<EntityId> {
             «new SrcJavaDocType(id)»
             @Immutable«IF id.base === null && idStrings.supported»
             «idStrings.annotations»«ENDIF»
+            «IF id.registeredByJandex»
+            @HasEntityTypeConstant
+            @HasPublicStaticIsValidMethod
+            @HasPublicStaticValueOfMethod
+            «ENDIF»
             «IF id.base !== null && options.jaxb»
             @XmlJavaTypeAdapter(«id.name»Converter.class)
             «ENDIF»
@@ -96,6 +116,30 @@ class FinalEntityIdArtifactFactory extends AbstractSource<EntityId> {
                 «new SrcVoBaseMethods(ctx, id)»
                 «IF id.base === null»
                     «idStrings»
+                «ENDIF»
+                «IF id.registeredByJandex && id.base.name != "String"»
+                /**
+                 * Returns the information if a given String can be converted into an instance of «className»: the
+                 * check {@code JandexEntityIdFactory} calls beside {@link #valueOf(String)}. A <code>null</code> value
+                 * returns <code>true</code>.
+                 * 
+                 * @param value
+                 *            Value to check.
+                 * 
+                 * @return TRUE if it's a valid «id.base.name», else FALSE.
+                 */
+                public static boolean isValid(@Nullable final String value) {
+                    if (value == null) {
+                        return true;
+                    }
+                    try {
+                        «id.base.name».valueOf(value);
+                    } catch (final NumberFormatException ex) {
+                        return false;
+                    }
+                    return true;
+                }
+
                 «ENDIF»
             }
             '''
