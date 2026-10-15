@@ -172,6 +172,9 @@ class CqrsDslValidator extends AbstractCqrsDslValidator {
 
 	public static val MODULE_DEPENDENCY_CYCLE = 'moduleDependencyCycle'
 
+	/** System property that turns the module dependency cycle from an error into a warning ('warning'). */
+	public static val MODULE_CYCLE_SEVERITY_PROPERTY = 'org.fuin.dsl.cqrs.moduleCycle'
+
 	public static val ROW_CANNOT_ANSWER_GATE = 'rowCannotAnswerGate'
 
 	public static val PATH_NEEDS_MORE_THAN_A_ROOT = 'pathNeedsMoreThanARoot'
@@ -428,6 +431,12 @@ class CqrsDslValidator extends AbstractCqrsDslValidator {
 	 * the rest only through the index, so a cycle closed by a file that is not open may surface late
 	 * or not at all. That is a deliberate trade: no editor-side index walk on every keystroke, and the
 	 * build refuses regardless.</p>
+	 *
+	 * <p><b>One way to downgrade it.</b> A model whose cycle is not a defect of the model but a fact of
+	 * the domain (two aggregates owned by different modules that must name each other's identity) can
+	 * run the build with {@code -Dorg.fuin.dsl.cqrs.moduleCycle=warning}. The cycle is then still
+	 * reported on every module in it, as a warning. The default stays an error, so a model that does
+	 * not ask for this keeps the refusal.</p>
 	 */
 	@Check
 	def checkModuleDependencyCycle(Module module) {
@@ -437,8 +446,12 @@ class CqrsDslValidator extends AbstractCqrsDslValidator {
 		val cycle = CqrsModuleDependencies.cycleThrough(module.name, graph)
 		if(cycle.empty) return;
 
-		error("Module '" + module.name + "' is part of a dependency cycle: " + cycle.join(" -> "),
-			module, CqrsDslPackage.Literals::MODULE__NAME, MODULE_DEPENDENCY_CYCLE)
+		val message = "Module '" + module.name + "' is part of a dependency cycle: " + cycle.join(" -> ")
+		if(System.getProperty(MODULE_CYCLE_SEVERITY_PROPERTY) == "warning") {
+			warning(message, module, CqrsDslPackage.Literals::MODULE__NAME, MODULE_DEPENDENCY_CYCLE)
+		} else {
+			error(message, module, CqrsDslPackage.Literals::MODULE__NAME, MODULE_DEPENDENCY_CYCLE)
+		}
 	}
 
 	/**

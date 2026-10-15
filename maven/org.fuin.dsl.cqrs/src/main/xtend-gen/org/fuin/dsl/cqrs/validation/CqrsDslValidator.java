@@ -191,6 +191,11 @@ public class CqrsDslValidator extends AbstractCqrsDslValidator {
 
   public static final String MODULE_DEPENDENCY_CYCLE = "moduleDependencyCycle";
 
+  /**
+   * System property that turns the module dependency cycle from an error into a warning ('warning').
+   */
+  public static final String MODULE_CYCLE_SEVERITY_PROPERTY = "org.fuin.dsl.cqrs.moduleCycle";
+
   public static final String ROW_CANNOT_ANSWER_GATE = "rowCannotAnswerGate";
 
   public static final String PATH_NEEDS_MORE_THAN_A_ROOT = "pathNeedsMoreThanARoot";
@@ -521,6 +526,12 @@ public class CqrsDslValidator extends AbstractCqrsDslValidator {
    * the rest only through the index, so a cycle closed by a file that is not open may surface late
    * or not at all. That is a deliberate trade: no editor-side index walk on every keystroke, and the
    * build refuses regardless.</p>
+   * 
+   * <p><b>One way to downgrade it.</b> A model whose cycle is not a defect of the model but a fact of
+   * the domain (two aggregates owned by different modules that must name each other's identity) can
+   * run the build with {@code -Dorg.fuin.dsl.cqrs.moduleCycle=warning}. The cycle is then still
+   * reported on every module in it, as a warning. The default stays an error, so a model that does
+   * not ask for this keeps the refusal.</p>
    */
   @Check
   public void checkModuleDependencyCycle(final org.fuin.dsl.cqrs.cqrsDsl.Module module) {
@@ -548,8 +559,14 @@ public class CqrsDslValidator extends AbstractCqrsDslValidator {
     String _plus = ("Module \'" + _name);
     String _plus_1 = (_plus + "\' is part of a dependency cycle: ");
     String _join = IterableExtensions.join(cycle, " -> ");
-    String _plus_2 = (_plus_1 + _join);
-    this.error(_plus_2, module, CqrsDslPackage.Literals.MODULE__NAME, CqrsDslValidator.MODULE_DEPENDENCY_CYCLE);
+    final String message = (_plus_1 + _join);
+    String _property = System.getProperty(CqrsDslValidator.MODULE_CYCLE_SEVERITY_PROPERTY);
+    boolean _equals = Objects.equals(_property, "warning");
+    if (_equals) {
+      this.warning(message, module, CqrsDslPackage.Literals.MODULE__NAME, CqrsDslValidator.MODULE_DEPENDENCY_CYCLE);
+    } else {
+      this.error(message, module, CqrsDslPackage.Literals.MODULE__NAME, CqrsDslValidator.MODULE_DEPENDENCY_CYCLE);
+    }
   }
 
   /**

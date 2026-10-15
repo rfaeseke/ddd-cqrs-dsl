@@ -8,8 +8,11 @@ import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.fuin.dsl.cqrs.cqrsDsl.CqrsDslPackage
 import org.fuin.dsl.cqrs.cqrsDsl.DomainModel
 import org.fuin.dsl.cqrs.validation.CqrsDslValidator
+import org.eclipse.xtext.diagnostics.Severity
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.^extension.ExtendWith
+
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 /**
  * Verifies the rule that refuses a dependency cycle between modules.
@@ -53,6 +56,44 @@ class CqrsDslModuleCycleTest {
 		''')
 		validationHelper.assertError(model, CqrsDslPackage.Literals.MODULE,
 			CqrsDslValidator.MODULE_DEPENDENCY_CYCLE)
+	}
+
+	/** The same cycle is only a warning when the build asks for it with the system property. */
+	@Test
+	def void cycleIsAWarningWhenTheBuildAsksForIt() {
+		val model = parseHelper.parse('''
+			context p {
+				module types {
+					type String
+				}
+				module a {
+					import p.types.*
+					import p.b.*
+
+					value-object AThing {
+						BThing other
+					}
+				}
+				module b {
+					import p.types.*
+					import p.a.*
+
+					value-object BThing {
+						AThing other
+					}
+				}
+			}
+		''')
+		System.setProperty(CqrsDslValidator.MODULE_CYCLE_SEVERITY_PROPERTY, "warning")
+		try {
+			validationHelper.assertWarning(model, CqrsDslPackage.Literals.MODULE,
+				CqrsDslValidator.MODULE_DEPENDENCY_CYCLE)
+			assertTrue(validationHelper.validate(model).filter[
+				code == CqrsDslValidator.MODULE_DEPENDENCY_CYCLE && severity == Severity.ERROR
+			].empty)
+		} finally {
+			System.clearProperty(CqrsDslValidator.MODULE_CYCLE_SEVERITY_PROPERTY)
+		}
 	}
 
 	/** One direction only is a dependency, not a cycle - even though both modules import each other. */
