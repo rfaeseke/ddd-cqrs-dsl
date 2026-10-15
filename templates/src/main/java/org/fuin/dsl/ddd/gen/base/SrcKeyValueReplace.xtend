@@ -8,6 +8,7 @@ import org.fuin.srcgen4j.core.emf.CodeSnippet
 import org.fuin.srcgen4j.core.emf.CodeSnippetContext
 
 import static extension org.fuin.dsl.cqrs.extensions.CqrsCollectionExtensions.*
+import static extension org.fuin.dsl.ddd.gen.extensions.JavaStringExtensions.*
 
 /**
  * Creates source code for a {@link org.fuin.objects4j.core.KeyValueEL#replace(String, KeyValue...)}.
@@ -30,9 +31,9 @@ class SrcKeyValueReplace implements CodeSnippet {
 
     override toString() {
         if (variables.nullSafe.size == 0) {
-            '''"«message»"'''
+            '''"«message.javaString»"'''
         } else {
-            '''KeyValueEL.replace("«message»", «FOR name : variables SEPARATOR ','» new KeyValue("«name»", «name»)«ENDFOR»)'''
+            '''KeyValueEL.replace("«message.javaString»", «FOR name : variables SEPARATOR ','» new KeyValue("«name»", «name»)«ENDFOR»)'''
         }
     }
 

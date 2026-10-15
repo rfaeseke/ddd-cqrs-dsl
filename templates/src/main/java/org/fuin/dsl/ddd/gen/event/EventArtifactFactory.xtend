@@ -31,6 +31,7 @@ import java.util.List
 import java.io.Serial
 import org.fuin.dsl.ddd.gen.base.TypeKeys
 import java.time.ZonedDateTime
+import static extension org.fuin.dsl.ddd.gen.extensions.JavaStringExtensions.*
 
 class EventArtifactFactory extends AbstractSource<Event> {
 
@@ -199,7 +200,7 @@ class EventArtifactFactory extends AbstractSource<Event> {
             
                 @Override
                 public String toString() {
-                    return Objects.requireNonNull(KeyValueEL.replace("«event.message»",
+                    return Objects.requireNonNull(KeyValueEL.replace("«event.message.javaString»",
                         new KeyValue("entityIdPath", getEntityIdPath())
                         «FOR v : variables»
                             , new KeyValue("«v.name»", «v.name»)
@@ -282,9 +283,9 @@ class EventArtifactFactory extends AbstractSource<Event> {
                 @Override
                 public String toString() {
                     «IF variables.nullSafe.size == 0»
-                        return "«event.message»";
+                        return "«event.message.javaString»";
                     «ELSE»
-                        return Objects.requireNonNull(KeyValueEL.replace("«event.message»"
+                        return Objects.requireNonNull(KeyValueEL.replace("«event.message.javaString»"
                         «FOR v : variables»
                             , new KeyValue("«v.name»", «v.name»)
                         «ENDFOR»

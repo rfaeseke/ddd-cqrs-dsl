@@ -17,6 +17,7 @@ import static extension org.fuin.dsl.cqrs.extensions.CqrsVariableExtensions.*
 import static extension org.fuin.dsl.ddd.gen.extensions.MapExtensions.*
 import org.fuin.dsl.ddd.gen.base.TypeKeys
 import java.util.List
+import static extension org.fuin.dsl.ddd.gen.extensions.JavaStringExtensions.*
 
 class ValidatorAnnotationArtifactFactory extends AbstractSource<Constraint> {
 
@@ -97,7 +98,7 @@ class ValidatorAnnotationArtifactFactory extends AbstractSource<Constraint> {
             public @interface «c.name» {
             
                 /** Used to create an error message. */
-                String message() default "«c.message.replaceValidatedValue»";
+                String message() default "«c.message.replaceValidatedValue.javaString»";
             
                 /** Processing groups with which the constraint declaration is associated. */        
                 Class<?>[] groups() default {};

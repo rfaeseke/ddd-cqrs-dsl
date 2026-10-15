@@ -33,6 +33,7 @@ import java.io.Serial
 import java.time.ZonedDateTime
 import org.fuin.dsl.ddd.gen.base.TypeKeys
 import org.fuin.dsl.cqrs.cqrsDsl.AggregateId
+import static extension org.fuin.dsl.ddd.gen.extensions.JavaStringExtensions.*
 
 class CommandArtifactFactory extends AbstractSource<Command> {
 
@@ -185,7 +186,7 @@ class CommandArtifactFactory extends AbstractSource<Command> {
             
                 @Override
                 public String toString() {
-                    return Objects.requireNonNull(KeyValueEL.replace("«command.message»",
+                    return Objects.requireNonNull(KeyValueEL.replace("«command.message.javaString»",
                         new KeyValue("entityIdPath", getEntityIdPath())
                         «FOR v : variables»
                             , new KeyValue("«v.name»", «v.name»)
@@ -267,9 +268,9 @@ class CommandArtifactFactory extends AbstractSource<Command> {
                 @Override
                 public final String toString() {
                     «IF variables.nullSafe.size == 0»
-                        return "«command.message»";
+                        return "«command.message.javaString»";
                     «ELSE»
-                        return Objects.requireNonNull(KeyValueEL.replace("«command.message»"
+                        return Objects.requireNonNull(KeyValueEL.replace("«command.message.javaString»"
                         «FOR v : variables»
                             , new KeyValue("«v.name»", «v.name»)
                         «ENDFOR»

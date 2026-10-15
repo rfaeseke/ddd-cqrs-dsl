@@ -9,6 +9,7 @@ import org.fuin.srcgen4j.core.emf.CodeSnippetContext
 
 import static extension org.fuin.dsl.cqrs.extensions.CqrsCollectionExtensions.*
 import static extension org.fuin.dsl.cqrs.extensions.CqrsEObjectExtensions.*
+import static extension org.fuin.dsl.ddd.gen.extensions.JavaStringExtensions.*
 
 /**
  * The sentence a refusal carries, composed in the language the caller asked for.
@@ -48,7 +49,7 @@ class SrcRefusalMessage implements CodeSnippet {
     }
 
     override toString() {
-        val template = '''Wording.message("«AbstractSource.bundleName(ex.module)»", "«ex.name»", "«ex.message»")'''
+        val template = '''Wording.message("«AbstractSource.bundleName(ex.module)»", "«ex.name»", "«ex.message.javaString»")'''
         if (ex.attributes.nullSafe.size == 0) {
             return template
         }
