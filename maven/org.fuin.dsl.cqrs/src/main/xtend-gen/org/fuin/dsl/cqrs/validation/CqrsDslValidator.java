@@ -1436,6 +1436,7 @@ public class CqrsDslValidator extends AbstractCqrsDslValidator {
       boolean _tripleNotEquals = (_origin != null);
       if (_tripleNotEquals) {
         vars.addAll(CqrsParameterExtensions.asNames(event.getOrigin().getParameters()));
+        vars.add("id");
       }
       boolean _contains = vars.contains(key);
       boolean _not = (!_contains);

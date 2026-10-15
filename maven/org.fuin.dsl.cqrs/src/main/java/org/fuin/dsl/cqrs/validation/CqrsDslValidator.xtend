@@ -1239,6 +1239,10 @@ class CqrsDslValidator extends AbstractCqrsDslValidator {
 			// Attributes copied from a constructor/method via 'copies-attributes-of' are also valid
 			if (event.origin !== null) {
 				vars.addAll(event.origin.parameters.asNames)
+				// An event that comes from an aggregate's method belongs to that aggregate, so 'id' names
+				// its identifier even where the event does not declare it (the templates leave the key to
+				// the process manager's own code, so nothing generated depends on it).
+				vars.add("id")
 			}
 			if (!vars.contains(key)) {
 				error(
